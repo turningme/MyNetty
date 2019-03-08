@@ -25,6 +25,14 @@ public class PushClient {
     private String host = "localhost";
     private int port = 8000;
 
+    public PushClient() {
+    }
+
+    public PushClient(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
     public void connect() throws Exception {
         try{
             EventLoopGroup group = new NioEventLoopGroup();

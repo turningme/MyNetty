@@ -28,7 +28,7 @@ public class PushServer {
         ServerBootstrap bs = new ServerBootstrap();
         bs.group(bossGroup, workGroup)
                 .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_BACKLOG, 1000)
+                .option(ChannelOption.SO_BACKLOG, 2)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
