@@ -2,6 +2,7 @@ package org.lkpnotice.turnning.mynetty.example.server.ver2;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.lkpnotice.turnning.mynetty.example.comm.Logger;
 import org.lkpnotice.turnning.mynetty.example.comm.v2.ChannelList;
 import org.lkpnotice.turnning.mynetty.example.comm.v2.Message;
 import org.lkpnotice.turnning.mynetty.example.comm.v2.MessageType;
@@ -16,6 +17,11 @@ public class HeartBeatHandler extends SimpleChannelInboundHandler<Message> {
         ChannelList.channels.add(ctx.channel());
     }
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        Logger.log("remove channel");
+        ChannelList.channels.remove(ctx.channel());
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {

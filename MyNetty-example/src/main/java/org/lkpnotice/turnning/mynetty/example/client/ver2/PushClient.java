@@ -48,7 +48,7 @@ public class PushClient {
                             p.addLast(new IdleStateHandler(20, 10, 0));
                             p.addLast(new ObjectEncoder());
                             p.addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
-                            p.addLast(new ReadTimeoutHandler(100));
+                            p.addLast(new ReadTimeoutHandler(20000));
                             p.addLast(new ConnectHandler());
                             p.addLast(new HeartBeatHandler());
                             p.addLast(new PushMsgHandler());

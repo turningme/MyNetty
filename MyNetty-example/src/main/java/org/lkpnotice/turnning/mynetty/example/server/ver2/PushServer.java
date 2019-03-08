@@ -9,6 +9,7 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.lkpnotice.turnning.mynetty.example.comm.Logger;
 import org.lkpnotice.turnning.mynetty.example.comm.v2.ChannelList;
 import org.lkpnotice.turnning.mynetty.example.comm.v2.Message;
 import org.lkpnotice.turnning.mynetty.example.comm.v2.MessageType;
@@ -37,7 +38,7 @@ public class PushServer {
                         p.addLast(new ObjectEncoder());
                         p.addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
                         //心跳超时
-                        p.addLast(new ReadTimeoutHandler(100));
+                        p.addLast(new ReadTimeoutHandler(50000));
                         p.addLast(new ConnectHandler());
                         p.addLast(new HeartBeatHandler());
                     }
@@ -53,11 +54,12 @@ public class PushServer {
 
                 while(true){
                     push();
+
                     try {
-                        Thread.sleep(3000);
+                        TimeUnit.SECONDS.sleep(1L);
                     } catch (InterruptedException e) {
+                        Logger.log(e+ "");
                         e.printStackTrace();
-                        //
                     }
                 }
 
@@ -67,6 +69,7 @@ public class PushServer {
     }
 
 
+    Integer count = 0;
 
     //消息推送
     public void push(){
@@ -74,17 +77,31 @@ public class PushServer {
         System.out.println("push 消息 + " + channels.size());
         Message message = new Message();
         message.setType(MessageType.MSG_PUSH.getValue());
-        PushMsg pushMsg = new PushMsg();
-        pushMsg.setAuthor_name("中新社");
-        pushMsg.setDate("2017-04-12 13:51");
-        pushMsg.setThumbnail_pic_s("http:\\/\\/05.imgmini.eastday.com\\/mobile\\/20170412\\/20170412135121_ff0cae3d2601191a77afa948a8424142_1_mwpm_03200403.jpeg");
-        pushMsg.setTitle("法国安娜思托保健品进军亚洲市场");
-        pushMsg.setUrl("http:\\/\\/mini.eastday.com\\/mobile\\/170412135121788.html");
-        message.setMsg(pushMsg);
+
+        message.setMsg(getPushMsg());
         for (Channel channel : channels){
             channel.writeAndFlush(message);
         }
     }
+
+
+    public PushMsg getPushMsg(){
+        PushMsg pushMsg = new PushMsg();
+/*        pushMsg.setAuthor_name("中新社");
+        pushMsg.setDate("2017-04-12 13:51");
+        pushMsg.setThumbnail_pic_s("http:\\/\\/05.imgmini.eastday.com\\/mobile\\/20170412\\/20170412135121_ff0cae3d2601191a77afa948a8424142_1_mwpm_03200403.jpeg");
+        pushMsg.setTitle("法国安娜思托保健品进军亚洲市场");
+        pushMsg.setUrl("http:\\/\\/mini.eastday.com\\/mobile\\/170412135121788.html");*/
+
+        pushMsg.setAuthor_name("中新社 - " + count++);
+        pushMsg.setDate("");
+        pushMsg.setThumbnail_pic_s("");
+        pushMsg.setTitle("");
+        pushMsg.setUrl("");
+        return pushMsg;
+    }
+
+
 
     public static void main(String[] args) throws Exception{
         PushServer pushServer = new PushServer();
