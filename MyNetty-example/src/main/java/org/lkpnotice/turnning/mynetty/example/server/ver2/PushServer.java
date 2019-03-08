@@ -74,6 +74,12 @@ public class PushServer {
     //消息推送
     public void push(){
         List<Channel> channels = ChannelList.channels;
+        if (channels.size() <=0) {
+            System.out.println("没有客户端列表消息");
+            return;
+        }
+
+        count++;
         System.out.println("push 消息 + " + channels.size());
         Message message = new Message();
         message.setType(MessageType.MSG_PUSH.getValue());
@@ -82,6 +88,8 @@ public class PushServer {
         for (Channel channel : channels){
             channel.writeAndFlush(message);
         }
+
+
     }
 
 
@@ -93,7 +101,7 @@ public class PushServer {
         pushMsg.setTitle("法国安娜思托保健品进军亚洲市场");
         pushMsg.setUrl("http:\\/\\/mini.eastday.com\\/mobile\\/170412135121788.html");*/
 
-        pushMsg.setAuthor_name("中新社 - " + count++);
+        pushMsg.setAuthor_name("中新社 - " + count);
         pushMsg.setDate("");
         pushMsg.setThumbnail_pic_s("");
         pushMsg.setTitle("");
