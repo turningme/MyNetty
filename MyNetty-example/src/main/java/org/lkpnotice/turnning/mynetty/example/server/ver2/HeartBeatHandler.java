@@ -19,6 +19,8 @@ public class HeartBeatHandler extends SimpleChannelInboundHandler<Message> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+
+        ctx.channel().isWritable();
         Logger.log("remove channel");
         ChannelList.channels.remove(ctx.channel());
     }
@@ -34,6 +36,12 @@ public class HeartBeatHandler extends SimpleChannelInboundHandler<Message> {
         }
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        //super.exceptionCaught(ctx, cause);
+        System.out.println(cause);
+        cause.printStackTrace();
+    }
 
     private Message buildMessage(byte result){
         Message msg = new Message();

@@ -10,6 +10,7 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.lkpnotice.turnning.mynetty.example.comm.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
@@ -34,12 +35,30 @@ public class PushClient {
     }
 
     public void connect() throws Exception {
+
+       /* new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("关闭....");
+
+                try {
+                    TimeUnit.SECONDS.sleep(10L);
+                    System.exit(-1);
+                } catch (InterruptedException e) {
+                    Logger.log(e+ "");
+                    e.printStackTrace();
+                }
+            }
+        }).start();*/
+
+
         try{
             EventLoopGroup group = new NioEventLoopGroup();
             Bootstrap bs = new Bootstrap();
             bs.group(group)
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.TCP_NODELAY,true)
                     .handler(new ChannelInitializer<SocketChannel>() {
 
                         @Override
@@ -77,9 +96,13 @@ public class PushClient {
     }
 
 
+
+
+
     public static void main(String[] args ) throws Exception {
         PushClient pushClient = new PushClient();
         pushClient.connect();
+
     }
 
 }

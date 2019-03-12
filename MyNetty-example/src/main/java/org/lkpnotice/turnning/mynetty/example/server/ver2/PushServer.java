@@ -31,6 +31,7 @@ public class PushServer {
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 2)
                 .option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.TCP_NODELAY,true)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel channel) throws Exception {
@@ -56,7 +57,7 @@ public class PushServer {
                     push();
 
                     try {
-                        TimeUnit.SECONDS.sleep(1L);
+                        TimeUnit.MILLISECONDS.sleep(1000L);
                     } catch (InterruptedException e) {
                         Logger.log(e+ "");
                         e.printStackTrace();
