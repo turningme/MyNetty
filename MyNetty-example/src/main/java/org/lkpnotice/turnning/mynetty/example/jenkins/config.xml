@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+    <actions/>
+    <description>第5步</description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <hudson.model.StringParameterDefinition>
+                    <name>BUILD_ID</name>
+                    <description></description>
+                    <defaultValue>default</defaultValue>
+                </hudson.model.StringParameterDefinition>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
+    </properties>
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.8.0">
+        <configVersion>2</configVersion>
+        <userRemoteConfigs>
+            <hudson.plugins.git.UserRemoteConfig>
+                <url>git@git.passiontec.cn:legend/crius.git</url>
+                <credentialsId>8d40e009-556f-4bdd-87a6-d02364227adc</credentialsId>
+            </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+            <hudson.plugins.git.BranchSpec>
+                <name>feature/jbp</name>
+            </hudson.plugins.git.BranchSpec>
+        </branches>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <submoduleCfg class="list"/>
+        <extensions/>
+    </scm>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers/>
+    <concurrentBuild>false</concurrentBuild>
+    <builders>
+        <hudson.tasks.Shell>
+            <command>MODULE_NAME=$(echo ${JOB_NAME} | cut -d &apos;.&apos; -f1)
+                PLATFORM_NAME=$(echo ${JOB_NAME} | cut -d &apos;.&apos; -f2)
+                BUILD_NUM=$BUILD_NUMBER
+                VERSION=$(date +%Y_%m_%d)_$(echo -n $GIT_COMMIT | tail -c4)_${BUILD_NUM}
+                cp ${WORKSPACE}/build.sh ${WORKSPACE}/bin -r ${WORKSPACE}/${MODULE_NAME}/
+
+
+                # 编译供测试、预上线、线上用的包
+                for platform in $PLATFORM_NAME; do
+                cd ${WORKSPACE}/${MODULE_NAME} &amp;&amp; sh build.sh $platform
+                if [ ${platform}x = onlinex ]; then
+                suffix=
+                else
+                suffix=_$platform
+                fi
+
+                cd ${WORKSPACE}/${MODULE_NAME}/output &amp;&amp; mkdir ${MODULE_NAME}_${VERSION}${suffix}
+                for file in $(ls | grep -v ${MODULE_NAME}_${VERSION}); do
+                mv $file ${MODULE_NAME}_${VERSION}${suffix}/
+                done
+
+                tar zcf ${MODULE_NAME}_${VERSION}${suffix}.tar.gz ${MODULE_NAME}_${VERSION}${suffix}
+                mv ${MODULE_NAME}_${VERSION}${suffix}.tar.gz ../
+                done
+
+                # ${WORKSPACE}/output/
+                mv ../${MODULE_NAME}*.tar.gz .
+
+                # 记录版本号
+                echo ${VERSION} &gt; latest_version
+
+
+
+                MODULE_NAME=$(echo ${JOB_NAME} | cut -d &apos;.&apos; -f1)
+                OSSCMD_HOME=/home/sankuai/opbin/oss
+
+                VERSION=$(cat ${WORKSPACE}/${MODULE_NAME}/output/latest_version)
+
+                python ${OSSCMD_HOME}/osscmd upload ${WORKSPACE}/${MODULE_NAME}/output/${MODULE_NAME}_${VERSION}_$PLATFORM_NAME.tar.gz oss://pingxin-production/${MODULE_NAME}/
+
+                python ${OSSCMD_HOME}/osscmd upload ${WORKSPACE}/${MODULE_NAME}/output/latest_version oss://pingxin-production/${MODULE_NAME}/latest_version
+
+
+            </command>
+        </hudson.tasks.Shell>
+    </builders>
+    <publishers>
+        <hudson.tasks.BuildTrigger>
+            <childProjects>test2.crius-meituan-api.java.deploy</childProjects>
+            <threshold>
+                <name>SUCCESS</name>
+                <ordinal>0</ordinal>
+                <color>BLUE</color>
+                <completeBuild>true</completeBuild>
+            </threshold>
+        </hudson.tasks.BuildTrigger>
+    </publishers>
+    <buildWrappers/>
+</project>
