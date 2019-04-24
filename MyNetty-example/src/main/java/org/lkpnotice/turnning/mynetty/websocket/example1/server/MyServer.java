@@ -7,6 +7,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
@@ -16,9 +18,11 @@ import java.net.InetSocketAddress;
 
 //websocket长连接示例
 public class MyServer {
+    static final Logger LOG = LoggerFactory.getLogger(MyServer.class);
     public static void main(String[] args) throws Exception{
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup wokerGroup = new NioEventLoopGroup();
+        LOG.info("Start ...");
 
         try{
             ServerBootstrap serverBootstrap = new ServerBootstrap();

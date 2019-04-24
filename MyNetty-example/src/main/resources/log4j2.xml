@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="INFO">
+
+    <appenders>
+
+        <Scribe name="locatereportlog">
+            <Filters>
+                <ThresholdFilter level="WARN" onMismatch="DENY" onMatch="NEUTRAL"/>
+                <ThresholdFilter level="ERROR" onMismatch="NEUTRAL" onMatch="ACCEPT"/>
+                <RegexFilter regex=".*(Low Resources|org.eclipse.jetty.io.AbstractConnection).*" onMatch="ACCEPT"
+                             onMismatch="DENY"/>
+            </Filters>
+            <LcLayout/>
+        </Scribe>
+
+        <Async name="ScribeAsyncAppender" blocking="false">
+            <AppenderRef ref="locatereportlog"/>
+        </Async>
+
+        <!--这个输出控制台的配置-->
+        <Console name="console" target="SYSTEM_OUT">
+            <!-- 控制台只输出level及以上级别的信息(onMatch),其他的直接拒绝(onMismatch) -->
+            <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 输出日志的格式 -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </Console>
+
+        <CraneAppender name="Crane"/>
+
+        <!--<XMDFile name="infolog" fileName="info.log">-->
+        <!--</XMDFile>-->
+
+        <XMDFile name="jmonitorappender" fileName="jmonitor.log">
+        </XMDFile>
+
+        <XMDFile name="jmonitorlogstoreappender" fileName="jmonitor.logstore.log">
+        </XMDFile>
+
+        <XMDFile name="mq" fileName="mq.log">
+        </XMDFile>
+
+        <XMDFile name="sqllog" fileName="sql.log">
+        </XMDFile>
+
+        <XMDFile name="errorlog" fileName="error.log">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+        </XMDFile>
+
+        <XMDFile name="infolog" fileName="info.log">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+        </XMDFile>
+
+        <XMDFile name="warnlog" fileName="warn.log">
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </XMDFile>
+
+    </appenders>
+
+    <loggers>
+
+        <root level="info" includeLocation="true">
+            <appender-ref ref="console" />
+            <appender-ref ref="warnlog" />
+            <appender-ref ref="errorlog" />
+            <appender-ref ref="infolog" />
+            <appender-ref ref="ScribeAsyncAppender" />
+            <AppenderRef ref="Crane"/>
+        </root>
+
+        <logger name="jmonitor"  level="info" includeLocation="true" additivity="false">
+            <appender-ref ref="jmonitorappender" />
+        </logger>
+
+        <logger name="jmonitorlogstore"  level="info" includeLocation="true" additivity="false">
+            <appender-ref ref="jmonitorlogstoreappender" />
+        </logger>
+
+
+    </loggers>
+</configuration>
