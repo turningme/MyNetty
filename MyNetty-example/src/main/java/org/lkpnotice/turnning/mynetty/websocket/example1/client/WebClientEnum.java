@@ -18,6 +18,7 @@ public enum  WebClientEnum {
             throw new RuntimeException("socketClient null");
         }
 
+
         TimeUnit.SECONDS.sleep(5L);
         boolean flag = true;
         int i=1000;

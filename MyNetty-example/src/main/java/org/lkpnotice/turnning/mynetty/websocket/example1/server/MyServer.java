@@ -22,7 +22,7 @@ public class MyServer {
     public static void main(String[] args) throws Exception{
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup wokerGroup = new NioEventLoopGroup();
-        LOG.info("Start ...");
+        LOG.error("Start ...");
 
         try{
             ServerBootstrap serverBootstrap = new ServerBootstrap();
