@@ -23,6 +23,8 @@ public class MyServer {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup wokerGroup = new NioEventLoopGroup();
         LOG.error("Start ...");
+        ChannelContainer.flag = true;
+
 
         try{
             ServerBootstrap serverBootstrap = new ServerBootstrap();
