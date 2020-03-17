@@ -19,9 +19,9 @@ public enum  WebClientEnum {
         }
 
 
-        TimeUnit.SECONDS.sleep(5L);
+        TimeUnit.SECONDS.sleep(1L);
         boolean flag = true;
-        int i=1000;
+        int i=1;
         while(flag) {
             socketClient.send("测试websocket。。。"+(i--));
             try {

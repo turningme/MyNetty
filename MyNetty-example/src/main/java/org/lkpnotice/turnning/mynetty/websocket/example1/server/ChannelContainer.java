@@ -28,10 +28,10 @@ public class ChannelContainer {
         }).start();
 
 
-        new Thread(new Runnable() {
+    /* new Thread(new Runnable() {
             @Override
             public void run() {
-                String baseMsg = "my message";
+                String baseMsg = "my message  ooooooooooooooooooooooopppppppppppppppppppppppppppllllllllllmmmmmmmmmmmttttttttttnnnnnnnmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm";
                 int counter = 0;
                 while (true){
 
@@ -46,7 +46,7 @@ public class ChannelContainer {
 
                 }
             }
-        }).start();
+        }).start();*/
     }
 
     public static void  addChannel(ChannelHandlerContext cxt){
@@ -58,7 +58,7 @@ public class ChannelContainer {
     }
 
     public static void addMessage(String msg) throws InterruptedException {
-        messageQueue.offer(msg, 30,TimeUnit.SECONDS);
+        messageQueue.put(msg);
         System.out.println(" insert message " + msg);
     }
 
@@ -66,15 +66,23 @@ public class ChannelContainer {
     public static void runTask(){
         while (flag){
             try {
-                if (wsMap.size() <=0) {
-                    TimeUnit.SECONDS.sleep(30);
+
+                String msg = messageQueue.poll(10, TimeUnit.SECONDS);
+                if (null == msg){
+                    TimeUnit.SECONDS.sleep(1);
                     continue;
                 }
-                String msg = messageQueue.poll(10, TimeUnit.SECONDS);
+
+                if (wsMap.size() <=0) {
+                    TimeUnit.SECONDS.sleep(1);
+                    continue;
+                }
+
                 Iterator<ChannelHandlerContext> cxtIter = wsMap.keySet().iterator();
                 while (cxtIter.hasNext()){
                     ChannelHandlerContext cxt = cxtIter.next();
-                    cxt.channel().writeAndFlush(new TextWebSocketFrame(msg));
+                    cxt.channel().write(new TextWebSocketFrame(msg));
+                    cxt.channel().flush();
                 }
                 System.out.println("send message  " + msg);
             } catch (InterruptedException e) {

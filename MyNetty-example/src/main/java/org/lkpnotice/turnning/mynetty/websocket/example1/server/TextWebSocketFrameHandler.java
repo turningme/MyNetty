@@ -22,7 +22,7 @@ public class TextWebSocketFrameHandler  extends SimpleChannelInboundHandler<Text
          * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
          * 传输的就是TextWebSocketFrame类型的数据
          */
-        //ctx.channel().writeAndFlush(new TextWebSocketFrame("服务时间："+ LocalDateTime.now()));
+        ctx.channel().writeAndFlush(new TextWebSocketFrame("服务时间："+ LocalDateTime.now()));
     }
 
     //每个channel都有一个唯一的id值

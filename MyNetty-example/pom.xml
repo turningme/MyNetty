@@ -5,11 +5,12 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.lkpnotice.turningm</groupId>
+        <groupId>org.lkpnotice.turning</groupId>
         <artifactId>mynetty</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
+
     <artifactId>mynetty-example</artifactId>
 
 
